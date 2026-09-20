@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: miniwallet
+  datasource:
+    url: ${URL_DB}
+    username: postgres
+    password: ${PASSWORD_DB}
