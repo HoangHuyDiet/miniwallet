@@ -5,8 +5,10 @@ import com.miniwallet.dto.request.RegisterRequest;
 import com.miniwallet.dto.response.LoginResponse;
 import com.miniwallet.dto.response.RegisterResponse;
 import com.miniwallet.entity.User;
+import com.miniwallet.entity.Wallet;
 import com.miniwallet.enums.UserRole;
 import com.miniwallet.repository.UserRepository;
+import com.miniwallet.repository.WalletRepository;
 import com.miniwallet.security.CustomUserDetails;
 import com.miniwallet.security.JwtService;
 import com.miniwallet.service.AuthService;
@@ -17,6 +19,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
@@ -24,11 +28,13 @@ import org.springframework.stereotype.Service;
 public class AuthServiceImpl implements AuthService {
 
   private final UserRepository userRepository;
+  private final WalletRepository walletRepository;
   private final PasswordEncoder passwordEncoder;
   private final JwtService jwtService;
   private final AuthenticationManager authenticationManager;
 
   @Override
+  @Transactional
   public RegisterResponse register(RegisterRequest request) {
     log.info("(register) username: {}", request.getUsername());
 
@@ -43,6 +49,13 @@ public class AuthServiceImpl implements AuthService {
         .build();
 
     User savedUser = userRepository.save(user);
+
+    Wallet wallet = Wallet.builder()
+        .user(savedUser)
+        .balance(BigDecimal.ZERO)
+        .build();
+    walletRepository.save(wallet);
+    log.info("(register) wallet created for userId: {}", savedUser.getId());
 
     CustomUserDetails userDetails = new CustomUserDetails(savedUser);
     String token = jwtService.generateToken(userDetails);

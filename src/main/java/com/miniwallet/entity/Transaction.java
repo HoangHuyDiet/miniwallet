@@ -19,6 +19,7 @@ import java.sql.Timestamp;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -26,6 +27,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Entity
 @Table(name = "transactions")
 @Builder
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Transaction {
@@ -34,6 +36,7 @@ public class Transaction {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
+  @Builder.Default
   @Column(nullable = false, unique = true, length = 36)
   private String referenceId = UUID.randomUUID().toString();
 
@@ -53,6 +56,7 @@ public class Transaction {
   @Column(nullable = false)
   private TransactionDirection direction;
 
+  @Builder.Default
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private TransactionStatus status = TransactionStatus.PENDING;
@@ -60,6 +64,7 @@ public class Transaction {
   @Column(nullable = false, precision = 18, scale = 2)
   private BigDecimal amount;
 
+  @Builder.Default
   @Column(nullable = false, precision = 18, scale = 2)
   private BigDecimal fee = BigDecimal.ZERO;
 
