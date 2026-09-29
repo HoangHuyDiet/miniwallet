@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -19,7 +20,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "wallet")
-@Getter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -31,7 +32,7 @@ public class Wallet {
 
   @OneToOne
   @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
-  private User userId;
+  private User user;
 
   @Column(nullable = false, precision = 18, scale = 2)
   private BigDecimal balance = BigDecimal.ZERO;

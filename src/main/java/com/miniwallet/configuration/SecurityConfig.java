@@ -33,29 +33,6 @@ public class SecurityConfig {
   }
 
   @Bean
-  @Primary
-  public UserDetailsService compositeUserDetailsService(
-      CustomUserDetailsService dbUserDetailsService,
-      PasswordEncoder passwordEncoder) {
-
-    UserDetails admin = org.springframework.security.core.userdetails.User
-        .withUsername("admin")
-        .password(passwordEncoder.encode("admin123"))
-        .roles("ADMIN")
-        .build();
-
-    InMemoryUserDetailsManager inMemory = new InMemoryUserDetailsManager(admin);
-
-    return username -> {
-      try {
-        return inMemory.loadUserByUsername(username);
-      } catch (UsernameNotFoundException e) {
-        return dbUserDetailsService.loadUserByUsername(username);
-      }
-    };
-  }
-
-  @Bean
   public DaoAuthenticationProvider authenticationProvider(
       UserDetailsService userDetailsService,
       PasswordEncoder passwordEncoder) {
@@ -73,8 +50,7 @@ public class SecurityConfig {
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(auth -> auth
             .requestMatchers(
-                "/api/v1/auth/register",
-                "/api/v1/auth/login"
+                "/api/v1/auth/register"
             ).permitAll()
             .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
             .anyRequest().authenticated()
